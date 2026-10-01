@@ -1,0 +1,102 @@
+const en = {
+  app: {
+    name: 'Business Manager',
+    tagline: 'Your brokerage & technical office, organized.',
+  },
+  nav: {
+    dashboard: 'Dashboard',
+    todos: 'Pending',
+    partners: 'Partners',
+    clients: 'Clients',
+    finances: 'Finances',
+    appointments: 'Appointments',
+    info: 'Useful Info',
+    inspections: 'Inspections',
+    settings: 'Settings',
+    logout: 'Sign out',
+    sectionApps: 'Applications',
+  },
+  apps: {
+    todos: {
+      title: 'Pending',
+      short: 'Pending',
+      description: 'Track open tasks, deadlines and follow-ups.',
+    },
+    partners: {
+      title: 'Partners',
+      short: 'Partners',
+      description: 'Manage collaborators, suppliers and associates.',
+    },
+    clients: {
+      title: 'Clients',
+      short: 'Clients',
+      description: 'Your client list, contacts and history.',
+    },
+    finances: {
+      title: 'Finances',
+      short: 'Finances',
+      description: 'Income, expenses, payments and balances.',
+    },
+    appointments: {
+      title: 'Appointments',
+      short: 'Appointments',
+      description: 'Schedule and organize meetings and visits.',
+    },
+    info: {
+      title: 'Useful Info',
+      short: 'Useful Info',
+      description: 'Notes, references and important information.',
+    },
+    inspections: {
+      title: 'Inspections',
+      short: 'Inspections',
+      description: 'Technical checks and property inspections.',
+    },
+  },
+  common: {
+    save: 'Save',
+    cancel: 'Cancel',
+    close: 'Close',
+    back: 'Back',
+    search: 'Search',
+    add: 'Add',
+    edit: 'Edit',
+    delete: 'Delete',
+    confirm: 'Confirm',
+    loading: 'Loading…',
+    empty: 'Nothing here yet.',
+    comingSoon: 'Coming soon',
+    comingSoonText:
+      'This application is under construction. Its data and features will be added next.',
+    open: 'Open',
+  },
+  settings: {
+    title: 'Settings',
+    appearance: 'Appearance',
+    theme: 'Theme',
+    themeLight: 'Light',
+    themeDark: 'Dark',
+    themeSystem: 'System',
+    language: 'Language',
+    languageEnglish: 'English',
+    languageGreek: 'Greek',
+    font: 'Font size',
+    fontSmall: 'Small',
+    fontMedium: 'Medium',
+    fontLarge: 'Large',
+  },
+  auth: {
+    title: 'Welcome back',
+    subtitle: 'Sign in to access your workspace.',
+    email: 'Email',
+    password: 'Password',
+    signIn: 'Sign in',
+    signOut: 'Sign out',
+    signingIn: 'Signing in…',
+    errorInvalid: 'Invalid email or password.',
+    errorGeneric: 'Something went wrong. Please try again.',
+  },
+};
+
+export type Translation = typeof en;
+export default en;
