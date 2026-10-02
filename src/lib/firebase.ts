@@ -1,6 +1,10 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore } from 'firebase/firestore';
+import {
+  initializeFirestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
+} from 'firebase/firestore';
 
 // NOTE: Firebase config values are not secret — access is protected by
 // Firestore security rules and Authentication, not by hiding these keys.
@@ -16,8 +20,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
-// Optional fields are stored as `undefined`; let Firestore omit them instead
-// of throwing "Unsupported field value: undefined".
+// - ignoreUndefinedProperties: optional fields are stored as `undefined`; let
+//   Firestore omit them instead of throwing "Unsupported field value".
+// - persistentLocalCache: keep data (and pending writes) in IndexedDB so the
+//   app stays fast and reliable offline and across reloads.
 export const db = initializeFirestore(app, {
   ignoreUndefinedProperties: true,
+  localCache: persistentLocalCache({
+    tabManager: persistentMultipleTabManager(),
+  }),
 });
