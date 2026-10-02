@@ -5,13 +5,23 @@ import { useI18n } from '../../i18n';
 import {
   CONTACT_ROLES,
   type Contact,
+  type ContactAssignment,
+  type ContactCode,
   type ContactInput,
-  type ContactKind,
   type ContactRole,
+  type ExtraContact,
+  type LabeledValue,
 } from '../../data/contacts';
+import {
+  AssignmentsEditor,
+  CodesEditor,
+  ExtraContactsEditor,
+  PhonesEditor,
+} from './ContactEditors';
 
 interface ContactFormProps {
   contact: Contact | null;
+  contacts: Contact[];
   defaultRole?: ContactRole;
   busy: boolean;
   onClose: () => void;
@@ -19,23 +29,18 @@ interface ContactFormProps {
 }
 
 interface FormState {
-  kind: ContactKind;
   roles: ContactRole[];
-  firstName: string;
-  lastName: string;
-  companyName: string;
-  phone: string;
-  mobile: string;
+  name: string;
+  phones: LabeledValue[];
   email: string;
-  website: string;
   street: string;
   city: string;
   postalCode: string;
   country: string;
-  vat: string;
-  taxOffice: string;
   specialty: string;
-  company: string;
+  codes: ContactCode[];
+  extraContacts: ExtraContact[];
+  assignments: ContactAssignment[];
   tags: string;
   notes: string;
   pinned: boolean;
@@ -46,24 +51,18 @@ function buildInitialState(
   defaultRole?: ContactRole,
 ): FormState {
   return {
-    kind: contact?.kind ?? 'person',
     roles: contact?.roles ?? (defaultRole ? [defaultRole] : []),
-    firstName: contact?.firstName ?? '',
-    lastName: contact?.lastName ?? '',
-    companyName:
-      contact && contact.kind === 'company' ? contact.name : '',
-    phone: contact?.phone ?? '',
-    mobile: contact?.mobile ?? '',
+    name: contact?.name ?? '',
+    phones: contact?.phones ?? [],
     email: contact?.email ?? '',
-    website: contact?.website ?? '',
     street: contact?.address?.street ?? '',
     city: contact?.address?.city ?? '',
     postalCode: contact?.address?.postalCode ?? '',
     country: contact?.address?.country ?? '',
-    vat: contact?.vat ?? '',
-    taxOffice: contact?.taxOffice ?? '',
     specialty: contact?.specialty ?? '',
-    company: contact?.company ?? '',
+    codes: contact?.codes ?? [],
+    extraContacts: contact?.extraContacts ?? [],
+    assignments: contact?.assignments ?? [],
     tags: contact?.tags?.join(', ') ?? '',
     notes: contact?.notes ?? '',
     pinned: contact?.pinned ?? false,
@@ -77,6 +76,7 @@ function clean(value: string): string | undefined {
 
 export function ContactForm({
   contact,
+  contacts,
   defaultRole,
   busy,
   onClose,
@@ -103,11 +103,7 @@ export function ContactForm({
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    const name =
-      state.kind === 'company'
-        ? state.companyName.trim()
-        : `${state.firstName} ${state.lastName}`.trim();
-
+    const name = state.name.trim();
     if (!name) {
       setError(t.contacts.nameRequired);
       return;
@@ -121,27 +117,48 @@ export function ContactForm({
     };
     const hasAddress = Object.values(address).some(Boolean);
 
+    const phones = state.phones
+      .map((p) => ({ ...p, label: p.label.trim(), value: p.value.trim() }))
+      .filter((p) => p.value);
+
+    const codes = state.codes
+      .map((c) => ({ ...c, value: c.value.trim(), label: clean(c.label ?? '') }))
+      .filter((c) => c.value);
+
+    const extraContacts = state.extraContacts
+      .map((x) => ({
+        ...x,
+        label: x.label.trim(),
+        name: clean(x.name ?? ''),
+        phone: clean(x.phone ?? ''),
+        email: clean(x.email ?? ''),
+      }))
+      .filter((x) => x.label || x.name || x.phone || x.email);
+
+    const assignments = state.assignments
+      .map((a) => ({
+        ...a,
+        label: clean(a.label ?? ''),
+        name: a.contactId ? undefined : clean(a.name ?? ''),
+        phone: a.contactId ? undefined : clean(a.phone ?? ''),
+      }))
+      .filter((a) => a.contactId || a.name || a.phone);
+
     onSubmit({
-      kind: state.kind,
       roles: state.roles,
       name,
-      firstName:
-        state.kind === 'person' ? clean(state.firstName) : undefined,
-      lastName: state.kind === 'person' ? clean(state.lastName) : undefined,
-      phone: clean(state.phone),
-      mobile: clean(state.mobile),
+      phones,
       email: clean(state.email),
-      website: clean(state.website),
       address: hasAddress ? address : undefined,
-      vat: clean(state.vat),
-      taxOffice: clean(state.taxOffice),
+      notes: clean(state.notes),
       specialty: clean(state.specialty),
-      company: clean(state.company),
+      codes,
+      extraContacts,
+      assignments,
       tags: state.tags
         .split(',')
         .map((tag) => tag.trim())
         .filter(Boolean),
-      notes: clean(state.notes),
       pinned: state.pinned,
     });
   };
@@ -179,54 +196,14 @@ export function ContactForm({
         <section className="form-section">
           <h3 className="form-section-title">{t.contacts.section.basics}</h3>
 
-          <div className="field">
-            <label>{t.contacts.field.kind}</label>
-            <div className="segmented" role="group" aria-label={t.contacts.field.kind}>
-              {(['person', 'company'] as const).map((kind) => (
-                <button
-                  key={kind}
-                  type="button"
-                  className={state.kind === kind ? 'active' : ''}
-                  aria-pressed={state.kind === kind}
-                  onClick={() => set('kind', kind)}
-                >
-                  {t.contacts.kind[kind]}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-grid">
-            {state.kind === 'person' ? (
-              <>
-                <Field label={t.contacts.field.firstName} htmlFor="cf-first">
-                  <input
-                    id="cf-first"
-                    className="input"
-                    value={state.firstName}
-                    onChange={(e) => set('firstName', e.target.value)}
-                  />
-                </Field>
-                <Field label={t.contacts.field.lastName} htmlFor="cf-last">
-                  <input
-                    id="cf-last"
-                    className="input"
-                    value={state.lastName}
-                    onChange={(e) => set('lastName', e.target.value)}
-                  />
-                </Field>
-              </>
-            ) : (
-              <Field label={t.contacts.field.companyName} htmlFor="cf-company-name">
-                <input
-                  id="cf-company-name"
-                  className="input"
-                  value={state.companyName}
-                  onChange={(e) => set('companyName', e.target.value)}
-                />
-              </Field>
-            )}
-          </div>
+          <Field label={t.contacts.field.name} htmlFor="cf-name">
+            <input
+              id="cf-name"
+              className="input"
+              value={state.name}
+              onChange={(e) => set('name', e.target.value)}
+            />
+          </Field>
 
           <div className="field">
             <label>{t.contacts.field.roles}</label>
@@ -247,45 +224,36 @@ export function ContactForm({
               })}
             </div>
           </div>
+
+          <Field
+            label={t.contacts.field.specialty}
+            htmlFor="cf-specialty"
+            hint={t.contacts.field.specialtyHint}
+          >
+            <input
+              id="cf-specialty"
+              className="input"
+              value={state.specialty}
+              onChange={(e) => set('specialty', e.target.value)}
+            />
+          </Field>
         </section>
 
         <section className="form-section">
-          <h3 className="form-section-title">{t.contacts.section.contact}</h3>
-          <div className="form-grid">
-            <Field label={t.contacts.field.phone} htmlFor="cf-phone">
-              <input
-                id="cf-phone"
-                className="input"
-                value={state.phone}
-                onChange={(e) => set('phone', e.target.value)}
-              />
-            </Field>
-            <Field label={t.contacts.field.mobile} htmlFor="cf-mobile">
-              <input
-                id="cf-mobile"
-                className="input"
-                value={state.mobile}
-                onChange={(e) => set('mobile', e.target.value)}
-              />
-            </Field>
-            <Field label={t.contacts.field.email} htmlFor="cf-email">
-              <input
-                id="cf-email"
-                className="input"
-                type="email"
-                value={state.email}
-                onChange={(e) => set('email', e.target.value)}
-              />
-            </Field>
-            <Field label={t.contacts.field.website} htmlFor="cf-website">
-              <input
-                id="cf-website"
-                className="input"
-                value={state.website}
-                onChange={(e) => set('website', e.target.value)}
-              />
-            </Field>
-          </div>
+          <h3 className="form-section-title">{t.contacts.section.phones}</h3>
+          <PhonesEditor
+            value={state.phones}
+            onChange={(v) => set('phones', v)}
+          />
+          <Field label={t.contacts.field.email} htmlFor="cf-email">
+            <input
+              id="cf-email"
+              className="input"
+              type="email"
+              value={state.email}
+              onChange={(e) => set('email', e.target.value)}
+            />
+          </Field>
         </section>
 
         <section className="form-section">
@@ -327,41 +295,34 @@ export function ContactForm({
         </section>
 
         <section className="form-section">
-          <h3 className="form-section-title">{t.contacts.section.details}</h3>
-          <div className="form-grid">
-            <Field label={t.contacts.field.vat} htmlFor="cf-vat">
-              <input
-                id="cf-vat"
-                className="input"
-                value={state.vat}
-                onChange={(e) => set('vat', e.target.value)}
-              />
-            </Field>
-            <Field label={t.contacts.field.taxOffice} htmlFor="cf-tax-office">
-              <input
-                id="cf-tax-office"
-                className="input"
-                value={state.taxOffice}
-                onChange={(e) => set('taxOffice', e.target.value)}
-              />
-            </Field>
-            <Field label={t.contacts.field.company} htmlFor="cf-company">
-              <input
-                id="cf-company"
-                className="input"
-                value={state.company}
-                onChange={(e) => set('company', e.target.value)}
-              />
-            </Field>
-            <Field label={t.contacts.field.specialty} htmlFor="cf-specialty">
-              <input
-                id="cf-specialty"
-                className="input"
-                value={state.specialty}
-                onChange={(e) => set('specialty', e.target.value)}
-              />
-            </Field>
-          </div>
+          <h3 className="form-section-title">{t.contacts.section.codes}</h3>
+          <p className="form-section-hint">{t.contacts.codesHint}</p>
+          <CodesEditor value={state.codes} onChange={(v) => set('codes', v)} />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section-title">
+            {t.contacts.section.extraContacts}
+          </h3>
+          <p className="form-section-hint">{t.contacts.extraContactsHint}</p>
+          <ExtraContactsEditor
+            value={state.extraContacts}
+            onChange={(v) => set('extraContacts', v)}
+          />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section-title">{t.contacts.section.assignments}</h3>
+          <p className="form-section-hint">{t.contacts.assignmentsHint}</p>
+          <AssignmentsEditor
+            value={state.assignments}
+            contacts={contacts}
+            onChange={(v) => set('assignments', v)}
+          />
+        </section>
+
+        <section className="form-section">
+          <h3 className="form-section-title">{t.contacts.section.notes}</h3>
           <Field
             label={t.contacts.field.tags}
             htmlFor="cf-tags"
@@ -374,10 +335,6 @@ export function ContactForm({
               onChange={(e) => set('tags', e.target.value)}
             />
           </Field>
-        </section>
-
-        <section className="form-section">
-          <h3 className="form-section-title">{t.contacts.section.notes}</h3>
           <Field label={t.contacts.field.notes} htmlFor="cf-notes">
             <textarea
               id="cf-notes"

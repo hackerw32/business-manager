@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import {
+  Briefcase,
   Loader2,
   Mail,
   Pencil,
@@ -46,6 +47,11 @@ export function ContactsView({ role }: ContactsViewProps) {
   const [editing, setEditing] = useState<Contact | null>(null);
   const [deleting, setDeleting] = useState<Contact | null>(null);
   const [busy, setBusy] = useState(false);
+
+  const nameById = useMemo(
+    () => new Map(contacts.map((c) => [c.id, c.name])),
+    [contacts],
+  );
 
   const filtered = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -118,6 +124,20 @@ export function ContactsView({ role }: ContactsViewProps) {
       notify(err instanceof Error ? err.message : String(err), 'error');
     }
   };
+
+  const assignmentText = (contact: Contact): string[] =>
+    contact.assignments.map((assignment) => {
+      const professional = assignment.contactId
+        ? nameById.get(assignment.contactId)
+        : undefined;
+      const who =
+        professional ?? assignment.name ?? assignment.phone ?? t.contacts.custom;
+      const kind =
+        assignment.type === 'other' && assignment.label
+          ? assignment.label
+          : t.contacts.assignmentType[assignment.type];
+      return `${kind}: ${who}`;
+    });
 
   return (
     <div>
@@ -203,40 +223,67 @@ export function ContactsView({ role }: ContactsViewProps) {
                 <div className="contact-title">
                   <span className="contact-name">{contact.name}</span>
                   {contact.pinned ? (
-                    <Pin size={13} className="pin-on" aria-label={t.contacts.pinned} />
+                    <Pin
+                      size={13}
+                      className="pin-on"
+                      aria-label={t.contacts.pinned}
+                    />
                   ) : null}
                 </div>
 
-                {contact.roles.length > 0 ? (
+                {contact.roles.length > 0 || contact.specialty || contact.codes.length > 0 ? (
                   <div className="contact-badges">
                     {contact.roles.map((r) => (
                       <span key={r} className="badge badge-neutral">
                         {t.contacts.role[r]}
                       </span>
                     ))}
+                    {contact.specialty ? (
+                      <span className="badge badge-accent">{contact.specialty}</span>
+                    ) : null}
+                    {contact.codes.map((code) => (
+                      <span
+                        key={code.id}
+                        className={`badge ${
+                          code.type === 'technical'
+                            ? 'badge-warning'
+                            : 'badge-neutral'
+                        }`}
+                      >
+                        {code.value}
+                      </span>
+                    ))}
                   </div>
                 ) : null}
 
-                <div className="contact-meta">
-                  {contact.phone ? (
-                    <a href={`tel:${contact.phone}`}>
-                      <Phone size={13} />
-                      {contact.phone}
-                    </a>
-                  ) : null}
-                  {contact.mobile ? (
-                    <a href={`tel:${contact.mobile}`}>
-                      <Phone size={13} />
-                      {contact.mobile}
-                    </a>
-                  ) : null}
-                  {contact.email ? (
-                    <a href={`mailto:${contact.email}`}>
-                      <Mail size={13} />
-                      {contact.email}
-                    </a>
-                  ) : null}
-                </div>
+                {contact.phones.length > 0 || contact.email ? (
+                  <div className="contact-meta">
+                    {contact.phones.map((phone) => (
+                      <a key={phone.id} href={`tel:${phone.value}`}>
+                        <Phone size={13} />
+                        {phone.label ? `${phone.label}: ` : ''}
+                        {phone.value}
+                      </a>
+                    ))}
+                    {contact.email ? (
+                      <a href={`mailto:${contact.email}`}>
+                        <Mail size={13} />
+                        {contact.email}
+                      </a>
+                    ) : null}
+                  </div>
+                ) : null}
+
+                {contact.assignments.length > 0 ? (
+                  <div className="contact-meta">
+                    {assignmentText(contact).map((text, index) => (
+                      <span key={contact.assignments[index].id}>
+                        <Briefcase size={13} />
+                        {text}
+                      </span>
+                    ))}
+                  </div>
+                ) : null}
               </div>
 
               <div className="contact-actions">
@@ -276,6 +323,7 @@ export function ContactsView({ role }: ContactsViewProps) {
       {formOpen ? (
         <ContactForm
           contact={editing}
+          contacts={contacts}
           defaultRole={role}
           busy={busy}
           onClose={() => {
