@@ -1,0 +1,313 @@
+/* ==========================================================================
+   Features — shared UI kit + app modules (contacts)
+   ========================================================================== */
+
+/* ---------- Modal (extended) ---------- */
+.modal {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - var(--space-8));
+}
+
+.modal-lg {
+  max-width: 720px;
+}
+
+.modal-body {
+  overflow-y: auto;
+}
+
+.modal-foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ---------- Forms ---------- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.form-grid > .field:only-child {
+  grid-column: 1 / -1;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.field-hint {
+  font-size: 0.78rem;
+  color: var(--text-faint);
+}
+
+.form-error {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 0.88rem;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.switch-row input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--accent);
+}
+
+/* ---------- Chips ---------- */
+.chip-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.chip,
+.chip-toggle {
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: background 0.15s ease, border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.chip:hover,
+.chip-toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.chip.active,
+.chip-toggle.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ---------- Toolbar ---------- */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.search-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 220px;
+  max-width: 380px;
+}
+
+.search-box > svg {
+  position: absolute;
+  left: 0.7rem;
+  color: var(--text-faint);
+  pointer-events: none;
+}
+
+.search-box .input {
+  padding-left: 2.2rem;
+}
+
+/* ---------- Loading / empty ---------- */
+.page-loading {
+  display: grid;
+  place-items: center;
+  min-height: 40vh;
+  color: var(--text-faint);
+}
+
+.empty-state {
+  display: grid;
+  place-items: center;
+  text-align: center;
+  gap: var(--space-2);
+  padding: var(--space-12) var(--space-4);
+}
+
+.empty-icon {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-xl);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.empty-state h3 {
+  font-size: 1.1rem;
+}
+
+.empty-state p {
+  max-width: 380px;
+}
+
+.empty-action {
+  margin-top: var(--space-3);
+}
+
+/* ---------- Contact list ---------- */
+.contact-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.contact-row:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.contact-avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.contact-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.contact-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.contact-name {
+  font-weight: 600;
+}
+
+.pin-on {
+  color: var(--warning);
+}
+
+.contact-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.contact-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.contact-meta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contact-meta a:hover {
+  color: var(--accent);
+}
+
+.contact-actions {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.btn-icon-danger:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* ---------- Toast (extended) ---------- */
+.toast-message {
+  flex: 1;
+}
+
+.toast-close {
+  display: grid;
+  place-items: center;
+  padding: 2px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-faint);
+}
+
+.toast-close:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-row {
+    align-items: flex-start;
+  }
+
+  .contact-actions {
+    flex-direction: column;
+  }
+}

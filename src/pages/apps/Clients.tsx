@@ -1,5 +1,5 @@
-import { AppPlaceholder } from '../../components/AppPlaceholder';
+import { ContactsView } from '../../features/contacts/ContactsView';
 
 export function Clients() {
-  return <AppPlaceholder id="clients" />;
+  return <ContactsView role="client" />;
 }
