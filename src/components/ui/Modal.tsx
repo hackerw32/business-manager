@@ -1,4 +1,5 @@
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { useI18n } from '../../i18n';
 
@@ -11,6 +12,10 @@ interface ModalProps {
   size?: 'md' | 'lg';
 }
 
+// Track stacked modals so Escape closes only the top-most one.
+let modalSeq = 0;
+const openModalStack: number[] = [];
+
 export function Modal({
   open,
   title,
@@ -20,19 +25,29 @@ export function Modal({
   size = 'md',
 }: ModalProps) {
   const t = useI18n();
+  const idRef = useRef<number | null>(null);
+  if (idRef.current === null) idRef.current = ++modalSeq;
 
   useEffect(() => {
     if (!open) return;
+    const id = idRef.current as number;
+    openModalStack.push(id);
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape' && openModalStack[openModalStack.length - 1] === id) {
+        onClose();
+      }
     };
     window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    return () => {
+      window.removeEventListener('keydown', onKey);
+      const index = openModalStack.indexOf(id);
+      if (index >= 0) openModalStack.splice(index, 1);
+    };
   }, [open, onClose]);
 
   if (!open) return null;
 
-  return (
+  return createPortal(
     <div className="modal-scrim" onMouseDown={onClose}>
       <div
         className={`modal ${size === 'lg' ? 'modal-lg' : ''}`}
@@ -55,6 +70,7 @@ export function Modal({
         <div className="modal-body">{children}</div>
         {footer ? <div className="modal-foot">{footer}</div> : null}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

@@ -316,6 +316,145 @@
   background: var(--danger-soft);
 }
 
+/* ---------- Finances ---------- */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.stat-card span {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.stat-card strong {
+  font-size: 1.15rem;
+}
+
+.stat-income strong {
+  color: var(--success);
+}
+.stat-expense strong {
+  color: var(--danger);
+}
+.stat-receivable strong {
+  color: var(--warning);
+}
+.stat-payable strong {
+  color: var(--danger);
+}
+
+.month-input {
+  width: auto;
+}
+
+.tx-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.tx-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.tx-row:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+}
+
+.tx-icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  flex-shrink: 0;
+}
+
+.tx-icon.tx-income {
+  background: var(--success-soft);
+  color: var(--success);
+}
+.tx-icon.tx-expense {
+  background: var(--danger-soft);
+  color: var(--danger);
+}
+
+.tx-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.tx-title {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.tx-who {
+  font-weight: 600;
+}
+
+.tx-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.tx-amount {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.tx-amount.tx-income {
+  color: var(--success);
+}
+.tx-amount.tx-expense {
+  color: var(--danger);
+}
+
+/* ---------- Contact picker ---------- */
+.contact-picker {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.contact-picker-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.contact-picker-row .select {
+  flex: 1;
+}
+
 /* ---------- Toast (extended) ---------- */
 .toast-message {
   flex: 1;

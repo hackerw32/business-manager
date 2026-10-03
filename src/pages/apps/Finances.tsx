@@ -1,5 +1,5 @@
-import { AppPlaceholder } from '../../components/AppPlaceholder';
+import { FinancesView } from '../../features/finances/FinancesView';
 
 export function Finances() {
-  return <AppPlaceholder id="finances" />;
+  return <FinancesView />;
 }
