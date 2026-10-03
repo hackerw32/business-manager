@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
-import { useI18n } from '../../i18n';
 import type { Contact } from '../../data/contacts';
 import { QuickContactDialog } from './QuickContactDialog';
 
@@ -15,6 +14,7 @@ interface ContactPickerProps {
   onChange: (value: ContactPickerValue) => void;
   addLabel: string;
   namePlaceholder: string;
+  freeTextLabel: string;
   inputId?: string;
 }
 
@@ -25,9 +25,9 @@ export function ContactPicker({
   onChange,
   addLabel,
   namePlaceholder,
+  freeTextLabel,
   inputId,
 }: ContactPickerProps) {
-  const t = useI18n();
   const [quickOpen, setQuickOpen] = useState(false);
 
   return (
@@ -46,7 +46,7 @@ export function ContactPicker({
             onChange({ contactId: id, contactName: contact?.name });
           }}
         >
-          <option value="">{t.finances.freeText}</option>
+          <option value="">{freeTextLabel}</option>
           {contacts.map((contact) => (
             <option key={contact.id} value={contact.id}>
               {contact.name}
@@ -71,7 +71,9 @@ export function ContactPicker({
           className="input"
           placeholder={namePlaceholder}
           value={value.contactName ?? ''}
-          onChange={(e) => onChange({ contactId: undefined, contactName: e.target.value })}
+          onChange={(e) =>
+            onChange({ contactId: undefined, contactName: e.target.value })
+          }
         />
       )}
 

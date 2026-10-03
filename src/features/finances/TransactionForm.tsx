@@ -13,7 +13,10 @@ import {
   type TransactionStatus,
 } from '../../data/transactions';
 import { PRESET_CATEGORIES, isPresetCategory } from './categories';
-import { ContactPicker, type ContactPickerValue } from './ContactPicker';
+import {
+  ContactPicker,
+  type ContactPickerValue,
+} from '../contacts/ContactPicker';
 
 interface TransactionFormProps {
   transaction: Transaction | null;
@@ -241,6 +244,7 @@ export function TransactionForm({
               onChange={handleContact}
               addLabel={t.finances.addClient}
               namePlaceholder={t.finances.field.contactName}
+              freeTextLabel={t.finances.freeText}
               inputId="tf-contact-name"
             />
           </div>
@@ -341,6 +345,7 @@ export function TransactionForm({
               onChange={handleAssigned}
               addLabel={t.finances.addContact}
               namePlaceholder={t.finances.field.assignedName}
+              freeTextLabel={t.finances.freeText}
               inputId="tf-assigned-name"
             />
           </div>

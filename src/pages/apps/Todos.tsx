@@ -1,5 +1,5 @@
-import { AppPlaceholder } from '../../components/AppPlaceholder';
+import { TodosView } from '../../features/todos/TodosView';
 
 export function Todos() {
-  return <AppPlaceholder id="todos" />;
+  return <TodosView />;
 }

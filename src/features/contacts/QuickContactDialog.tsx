@@ -31,8 +31,8 @@ export function QuickContactDialog({
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    // This form can be rendered inside the transaction form; stop the submit
-    // event from bubbling and triggering the outer form.
+    // This form can be rendered inside another form; stop the submit event from
+    // bubbling and triggering the outer form.
     e.stopPropagation();
     const trimmed = name.trim();
     if (!trimmed) {
